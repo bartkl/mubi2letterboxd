@@ -38,8 +38,8 @@ def mubi_api_reader(base_url, user_id, items_per_page=100):
             log("The MUBI server gave an error response:\n")
             log(f"Status code: {e.code}\n")
             log(f"Message: {e.read()}\n", -1)
-        except urllib.error.URLError as e:
-            log("The provided URL is invalid.", -1)
+        except (urllib.error.URLError, ValueError) as e:
+            log("The provided URL is invalid.\n", -1)
 
 
 def mubi_file_reader(path):
@@ -94,20 +94,20 @@ def main():
     next(write_letterboxd)  # Priming the coroutine.
 
     if "path" in args:
-        log(f"Reading data from MUBI file `{args.path}`.\n")
+        log(f"Reading data from MUBI file `{args.path}`.\n\n")
         read_mubi = mubi_file_reader(args.path)
 
         log("Writing data to the Letterbox'd CSV...")
         write_letterboxd.send(next(read_mubi))
-        log("  done.\n")
+        log("   done.\n")
     elif "user_id" in args:
-        log(f"Reading data from MUBI API at URL: `{args.base_url}` using user ID `{args.user_id}` and {args.items_per_page} items per call.\n")
+        log(f"Reading data from MUBI API at URL: `{args.base_url}` using user ID `{args.user_id}` and {args.items_per_page} items per call.\n\n")
         read_mubi = mubi_api_reader(args.base_url, args.user_id, args.items_per_page)
 
         for nr, page in enumerate(read_mubi, 1):
             log(f"Writing MUBI site data page {nr} to the Letterbox'd CSV...")
             write_letterboxd.send(page)
-            log("  done.\n")
+            log("   done.\n")
     else:
         log("Error: please supply parameters to fetch MUBI data, either from a local file, or from the MUBI API.\n", -1)
 
