@@ -13,7 +13,7 @@ Then, you can simply clone this repository or download the `mubi2letterboxd.py` 
 ## Usage
 To use this script, simply invoke Python on it:
 
-```sh
+```console
 $ python mubi2letterboxd.py
 Error: please supply parameters to fetch MUBI data, either from a local file, or from the MUBI API.
 ```
@@ -22,7 +22,7 @@ As you can see, you need to pass in some arguments in order for it to get to wor
 
 
 ### Help
-```sh
+```console
 $ python mubi2letterboxd.py -h
 
 usage: mubi2letterboxd [-h] [--output_path output-path] {file,api} ...
@@ -50,7 +50,7 @@ So, my user ID is `6341306`.
 
 To run the script and fetch the data from the MUBI API, I would enter:
 
-```sh
+```console
 $ python mubi2letterboxd.py api 6341306
 Reading data from MUBI API at URL: `https://mubi.com/services/api/ratings` using user ID `6341306` and 100 items per call.
 
@@ -72,7 +72,7 @@ This can be changed with the `--output_path` or `-o` option (see _Help_ above).
 
 #### Help
 For a full list of supported options, ask for help this way:
-```sh
+```console
 $ python mubi2letterboxd.py api -h
 usage: mubi2letterboxd api [-h] [--items-per-page ITEMS_PER_PAGE] [--base-url BASE_URL] user-id
 
@@ -89,7 +89,7 @@ optional arguments:
 ### Importing from MUBI data file
 If for some reason you already have downloaded the MUBI data in the literal JSON form it is outputted by the API, and have that stored in a file, you can avoid having to connect to MUBI's API and read from that file directly. I won't be detailing this scenario and refer you to the help screen:
 
-```sh
+```console
 $ python mubi2letterboxd.py file -h
 usage: mubi2letterboxd file [-h] path
 
