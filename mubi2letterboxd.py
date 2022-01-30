@@ -7,10 +7,10 @@ from operator import itemgetter
 
 
 BASE_URL = "https://mubi.com/services/api/ratings"
-USER_ID = "6341306"
+USER_ID = "6058508"
 
 
-def mubi_reader(base_url, user_id, items_per_page=100):
+def mubi_api_reader(base_url, user_id, items_per_page=100):
     url = f"{base_url}?user_id={user_id}&per_page={items_per_page}"
     page = 1
 
@@ -25,8 +25,7 @@ def mubi_reader(base_url, user_id, items_per_page=100):
             page += 1
 
 
-# TODO: Locally, to reduce load on MUBI during development.
-def mubi_reader(base_url, user_id, items_per_page=100):
+def mubi_file_reader(base_url, user_id, items_per_page=100):
     for nr in range(0, 8):
         with open(f"data/out_{nr}.txt") as f:
             yield json.loads(f.read())
@@ -60,14 +59,12 @@ def create_letterboxd_item(mubi_item):
 
 
 def main():
-    read_mubi = mubi_reader(BASE_URL, USER_ID)
+    read_mubi = mubi_api_reader(BASE_URL, USER_ID)
     write_letterboxd = letterboxd_writer("out.txt")
-    next(write_letterboxd)  # Priming.
+    next(write_letterboxd)  # Priming the coroutine.
 
     for nr, page in enumerate(read_mubi):
-        with open(f"out_{nr}.txt", mode="w") as f:
-            write_letterboxd.send(page)
-            # f.write(json.dumps(page))
+        write_letterboxd.send(page)
 
 
 
