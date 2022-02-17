@@ -4,6 +4,8 @@ If you want to import your MUBI ratings and reviews into your Letterboxd account
 
 It is a command-line tool written in Python that imports your MUBI data, extracts the relevant data for Letterboxd and transforms it appropriately, and finally writes a [Letterboxd input format CSV](https://letterboxd.com/about/importing-data/) that you can import [in the browser](https://letterboxd.com/import/).
 
+**Important**: Currently, the `WatchedDate` field is mapped to MUBI's `updated_at` field. Sadly, this can result in many meaningless/incorrect dates, since this value is also updated when you edit your rating, or even when a user likes your review. Right now I don't see a way around this limitation, since the MUBI API returns no more suitable datetime fields. If someone knows how to deal with this properly, please contact me.
+
 ## Installation and configuration
 None, really!
 
