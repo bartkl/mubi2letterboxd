@@ -69,7 +69,7 @@ def create_letterboxd_item(mubi_item):
         "Year": mubi_item["film"]["year"],
         "Directors": ",".join(map(itemgetter("name"), mubi_item["film"]["directors"])),
         "Rating": float(mubi_item["overall"]),
-        "WatchedDate": datetime.fromtimestamp(mubi_item["updated_at"]).strftime("%Y-%m-%d"),
+        "WatchedDate": datetime.utcfromtimestamp(mubi_item["updated_at"]).strftime("%Y-%m-%d"),
         "Review": mubi_item["body"],
     }
 
