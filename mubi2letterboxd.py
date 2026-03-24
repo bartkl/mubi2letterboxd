@@ -30,7 +30,7 @@ def mubi_api_reader(base_url, user_id, items_per_page=100):
         try:
             paged_url = f"{url}?per_page={items_per_page}"
             if cursor is not None:
-                paged_url += f"&cursor={cursor}"
+                paged_url += f"&before={cursor}"
 
             req = urllib.request.Request(paged_url, headers={
                 "CLIENT_COUNTRY": "US",
