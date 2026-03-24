@@ -20,7 +20,7 @@ def log(msg, ret_code=None):
         sys.exit(ret_code)
 
 
-def mubi_api_reader(base_url, user_id, items_per_page=100):
+def mubi_api_reader(base_url, user_id, client_country, items_per_page=100):
     url = base_url.format(user_id=user_id)
     cursor = None
     fetched = 0
@@ -33,7 +33,7 @@ def mubi_api_reader(base_url, user_id, items_per_page=100):
                 paged_url += f"&before={cursor}"
 
             req = urllib.request.Request(paged_url, headers={
-                "CLIENT_COUNTRY": "US",
+                "CLIENT_COUNTRY": client_country,
                 "CLIENT": "web",
             })
             with urllib.request.urlopen(req) as conn:
@@ -107,6 +107,7 @@ def main():
     parser_file.add_argument("path", help="path to the file to read the data from")
 
     parser_api.add_argument("user_id", metavar="user-id", help="your user ID as it appears in the URL of your profile page")
+    parser_api.add_argument("--client-country", default="US", help="the client country required by the MUBI API")
     parser_api.add_argument("--items-per-page", default=ITEMS_PER_PAGE, help="items to fetch per call to MUBI")
     parser_api.add_argument("--base-url", default=BASE_URL, help="MUBI service API URL to perform requests to")
 
@@ -123,8 +124,8 @@ def main():
         write_letterboxd.send(next(read_mubi))
         log("   done.\n")
     elif "user_id" in args:
-        log(f"Reading data from MUBI API at URL: `{args.base_url}` using user ID `{args.user_id}` and {args.items_per_page} items per call.\n\n")
-        read_mubi = mubi_api_reader(args.base_url, args.user_id, args.items_per_page)
+        log(f"Reading data from MUBI API at URL: `{args.base_url}` using user ID `{args.user_id}`, client country `{args.client_country}` and {args.items_per_page} items per call.\n\n")
+        read_mubi = mubi_api_reader(args.base_url, args.user_id, args.client_country, args.items_per_page)
 
         for nr, page in enumerate(read_mubi, 1):
             log(f"Writing MUBI site data page {nr} to the Letterbox'd CSV...")

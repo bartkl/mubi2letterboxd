@@ -22,7 +22,6 @@ Error: please supply parameters to fetch MUBI data, either from a local file, or
 
 As you can see, you need to pass in some arguments in order for it to get to work. We'll get to those in a bit. First, let's invoke the help option.
 
-
 ### Help
 ```console
 $ python mubi2letterboxd.py -h
@@ -44,16 +43,18 @@ optional arguments:
 ### Importing from MUBI API
 This use case is almost certainly the one you want. It connects to the MUBI API and retrieves your ratings/reviews data.
 
-You'll need to pass in your user ID, which you can find in the URL to your profile.  For example, my profile page URL is:
+You'll need to pass in your user ID, which you can find in the URL to your profile, and your client country code (which defaults to `US`).
+
+For example, my profile page URL is:
 
 > https://mubi.com/users/6341306
 
-So, my user ID is `6341306`.
+So, my user ID is `6341306`. I live in the Netherlands, so my client country code is `NL`.
 
 To run the script and fetch the data from the MUBI API, I would enter:
 
 ```console
-$ python mubi2letterboxd.py api 6341306
+$ python mubi2letterboxd.py api 6341306 --client-country NL
 Reading data from MUBI API at URL: `https://mubi.com/services/api/ratings` using user ID `6341306` and 100 items per call.
 
 Writing MUBI site data page 1 to the Letterbox'd CSV...   done.
@@ -64,11 +65,12 @@ Writing MUBI site data page 5 to the Letterbox'd CSV...   done.
 Writing MUBI site data page 6 to the Letterbox'd CSV...   done.
 Writing MUBI site data page 7 to the Letterbox'd CSV...   done.
 Writing MUBI site data page 8 to the Letterbox'd CSV...   done.
+Writing MUBI site data page 9 to the Letterbox'd CSV...   done.
 
 Successfully wrote the Letterboxd import CSV file to `letterboxd.csv`.
 ```
 
-As you can see, since it defaults to the retrieval of 100 items per call, it had to do 8 calls total to fetch all my data.
+As you can see, since it defaults to the retrieval of 100 items per call, it had to do 9 calls total to fetch all my data.
 The Letterboxd CSV file was then written to `letterboxd.csv` in the current directory, which is default.
 This can be changed with the `--output_path` or `-o` option (see _Help_ above).
 
@@ -76,13 +78,15 @@ This can be changed with the `--output_path` or `-o` option (see _Help_ above).
 For a full list of supported options, ask for help this way:
 ```console
 $ python mubi2letterboxd.py api -h
-usage: mubi2letterboxd api [-h] [--items-per-page ITEMS_PER_PAGE] [--base-url BASE_URL] user-id
+usage: mubi2letterboxd api [-h] [--client_country CLIENT_COUNTRY] [--items-per-page ITEMS_PER_PAGE] [--base-url BASE_URL] user-id
 
 positional arguments:
   user-id               your user ID as it appears in the URL of your profile page
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  --client-country CLIENT_COUNTRY
+                        the client country required by the MUBI API
   --items-per-page ITEMS_PER_PAGE
                         items to fetch per call to MUBI
   --base-url BASE_URL   MUBI service API URL to perform requests to
