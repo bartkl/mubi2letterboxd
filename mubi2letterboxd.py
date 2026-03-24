@@ -9,7 +9,7 @@ from datetime import datetime
 from operator import itemgetter
 
 
-BASE_URL = "https://mubi.com/services/api/ratings"
+BASE_URL = "https://api.mubi.com/v4/users/{user_id}/ratings"
 ITEMS_PER_PAGE = 100
 
 
@@ -21,19 +21,41 @@ def log(msg, ret_code=None):
 
 
 def mubi_api_reader(base_url, user_id, items_per_page=100):
-    url = f"{base_url}?user_id={user_id}&per_page={items_per_page}"
-    page = 1
+    url = base_url.format(user_id=user_id)
+    cursor = None
+    fetched = 0
+    total = None
 
     while True:
         try:
-            with urllib.request.urlopen(f"{url}&page={page}") as conn:
-                data = json.loads(conn.read())
+            paged_url = f"{url}?per_page={items_per_page}"
+            if cursor is not None:
+                paged_url += f"&before={cursor}"
 
-                if data == []:
+            req = urllib.request.Request(paged_url, headers={
+                "CLIENT_COUNTRY": "US",
+                "CLIENT": "web",
+            })
+            with urllib.request.urlopen(req) as conn:
+                data = json.loads(conn.read())
+                ratings = data.get("ratings", [])
+                meta = data.get("meta", {})
+
+                if total is None:
+                    total = meta.get("total_count")
+
+                if not ratings:
                     return
 
-                yield data
-                page += 1
+                yield ratings
+                fetched += len(ratings)
+
+                if total is not None and fetched >= total:
+                    return
+
+                cursor = meta.get("next_cursor")
+                if cursor is None:
+                    return
         except urllib.error.HTTPError as e:
             log("The MUBI server gave an error response:\n")
             log(f"Status code: {e.code}\n")
@@ -69,7 +91,7 @@ def create_letterboxd_item(mubi_item):
         "Year": mubi_item["film"]["year"],
         "Directors": ",".join(map(itemgetter("name"), mubi_item["film"]["directors"])),
         "Rating": float(mubi_item["overall"]),
-        "WatchedDate": datetime.utcfromtimestamp(mubi_item["updated_at"]).strftime("%Y-%m-%d"),
+        "WatchedDate": datetime.strptime(mubi_item["updated_at"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d"),
         "Review": mubi_item["body"],
     }
 
