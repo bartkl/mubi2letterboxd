@@ -23,6 +23,8 @@ def log(msg, ret_code=None):
 def mubi_api_reader(base_url, user_id, items_per_page=100):
     url = base_url.format(user_id=user_id)
     cursor = None
+    fetched = 0
+    total = None
 
     while True:
         try:
@@ -37,12 +39,21 @@ def mubi_api_reader(base_url, user_id, items_per_page=100):
             with urllib.request.urlopen(req) as conn:
                 data = json.loads(conn.read())
                 ratings = data.get("ratings", [])
+                meta = data.get("meta", {})
+
+                if total is None:
+                    total = meta.get("total_count")
 
                 if not ratings:
                     return
 
                 yield ratings
-                cursor = data.get("meta", {}).get("next_cursor")
+                fetched += len(ratings)
+
+                if total is not None and fetched >= total:
+                    return
+
+                cursor = meta.get("next_cursor")
                 if cursor is None:
                     return
         except urllib.error.HTTPError as e:
