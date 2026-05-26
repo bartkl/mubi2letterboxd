@@ -106,6 +106,9 @@ optional arguments:
   -h, --help  show this help message and exit
 ```
 
+> [!caution]
+> Make sure the file is encoded using UTF-8 (with or without BOM).
+
 ## Inspiration
 I was inspired by [Igor Rudenko's script](https://github.com/hextriclosan/mubi2letterboxd), but hesitated to use it since it requires installing the Go compiler. Then I figured: "How hard can it be?", and wrote my own version in Python.  Note that this implementation does not mirror that one, but is written from scratch.
 

@@ -65,14 +65,14 @@ def mubi_api_reader(base_url, user_id, client_country, items_per_page=100):
 
 
 def mubi_file_reader(path):
-    with open(path) as f:
+    with open(path, encoding="utf-8-sig", newline=os.linesep) as f:
         yield json.loads(f.read())
 
 
 def letterboxd_writer(csv_file):
     result = []
 
-    with open(csv_file, "w", newline=os.linesep) as f:
+    with open(csv_file, "w", encoding="utf-8-sig", newline=os.linesep) as f:
         field_names = ["Title", "Year", "Directors", "Rating", "WatchedDate", "Review"]
         writer = csv.DictWriter(f, fieldnames=field_names)
 
